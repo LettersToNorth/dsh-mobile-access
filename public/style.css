@@ -1,0 +1,507 @@
+/* dsh-mobile-access — 配对页与桌面注入浮层共用样式（.dshm- 命名空间） */
+
+.dshm-page {
+  --dshm-bg: #f5f7fb;
+  --dshm-card: #ffffff;
+  --dshm-text: #17233b;
+  --dshm-sub: #5b6b85;
+  --dshm-line: #e3e9f2;
+  --dshm-accent: #2f6fed;
+  --dshm-accent-soft: #eaf1ff;
+  --dshm-info: #2f6fed;
+  --dshm-warn: #b25e09;
+  --dshm-danger: #c23934;
+  --dshm-code-bg: #0b1220;
+  --dshm-code-text: #9fe3b9;
+  margin: 0;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 28px 16px 48px;
+  background: var(--dshm-bg);
+  color: var(--dshm-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', 'Microsoft YaHei', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dshm-page {
+    --dshm-bg: #0b1220;
+    --dshm-card: #131c2e;
+    --dshm-text: #e6edf7;
+    --dshm-sub: #9fb0c7;
+    --dshm-line: #26334a;
+    --dshm-accent: #5b8cff;
+    --dshm-accent-soft: #1b2a49;
+    --dshm-info: #8ab4ff;
+    --dshm-warn: #ffb86b;
+    --dshm-danger: #ff8a80;
+    --dshm-code-bg: #060a12;
+  }
+}
+
+.dshm-page *,
+.dshm-overlay * {
+  box-sizing: border-box;
+}
+
+.dshm-page__main {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.dshm-hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.dshm-hero__icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.dshm-hero__title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.dshm-hero__sub {
+  margin: 2px 0 0;
+  color: var(--dshm-sub);
+  font-size: 0.88rem;
+}
+
+/* 提示条 */
+
+.dshm-notice {
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin: 0 0 16px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  border: 1px solid var(--dshm-line);
+  background: var(--dshm-card);
+}
+
+.dshm-notice--info {
+  color: var(--dshm-info);
+  border-color: color-mix(in srgb, var(--dshm-info) 35%, transparent);
+  background: var(--dshm-accent-soft);
+}
+
+.dshm-notice--warn {
+  color: var(--dshm-warn);
+  border-color: color-mix(in srgb, var(--dshm-warn) 40%, transparent);
+}
+
+.dshm-notice--error {
+  color: var(--dshm-danger);
+  border-color: color-mix(in srgb, var(--dshm-danger) 45%, transparent);
+}
+
+.dshm-notice__title {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+}
+
+.dshm-notice__text {
+  margin: 0 0 10px;
+  overflow-wrap: anywhere;
+}
+
+.dshm-hint {
+  color: var(--dshm-sub);
+  font-size: 0.78rem;
+  line-height: 1.6;
+  margin: 8px 0 0;
+}
+
+/* 按钮 */
+
+.dshm-btn {
+  border: 1px solid var(--dshm-line);
+  background: var(--dshm-card);
+  color: var(--dshm-text);
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.dshm-btn:hover {
+  border-color: var(--dshm-accent);
+  color: var(--dshm-accent);
+}
+
+.dshm-btn--small {
+  padding: 6px 10px;
+  font-size: 0.78rem;
+}
+
+.dshm-btn--primary {
+  background: var(--dshm-accent);
+  border-color: var(--dshm-accent);
+  color: #ffffff;
+}
+
+.dshm-btn--primary:hover {
+  color: #ffffff;
+  filter: brightness(1.08);
+}
+
+.dshm-btn--block {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 16px;
+}
+
+/* 主内容 */
+
+.dshm-grid {
+  display: flex;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.dshm-card {
+  background: var(--dshm-card);
+  border: 1px solid var(--dshm-line);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(11, 18, 32, 0.07);
+  min-width: 0;
+}
+
+.dshm-card--qr {
+  flex: 0 0 264px;
+  text-align: center;
+}
+
+.dshm-card--info {
+  flex: 1;
+}
+
+.dshm-card__title {
+  margin: 0 0 14px;
+  font-size: 0.98rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dshm-qr {
+  width: 220px;
+  min-height: 220px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid var(--dshm-line);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.dshm-qr svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* 字段 */
+
+.dshm-field {
+  margin-bottom: 16px;
+}
+
+.dshm-field--stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.dshm-field__label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--dshm-sub);
+  margin-bottom: 6px;
+}
+
+.dshm-mono {
+  font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace;
+  letter-spacing: 0.03em;
+}
+
+.dshm-field__value {
+  display: block;
+  background: var(--dshm-code-bg);
+  color: var(--dshm-code-text);
+  border-radius: 8px;
+  padding: 9px 11px;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+  margin-bottom: 6px;
+}
+
+.dshm-field__value--small {
+  font-size: 0.76rem;
+}
+
+.dshm-code {
+  display: block;
+  background: var(--dshm-code-bg);
+  color: var(--dshm-code-text);
+  border-radius: 8px;
+  padding: 12px 11px;
+  font-size: 1.5rem;
+  letter-spacing: 0.45em;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.dshm-expiry-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 4px 0 2px;
+}
+
+.dshm-expiry {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.88rem;
+}
+
+.dshm-pill {
+  display: inline-block;
+  min-width: 22px;
+  text-align: center;
+  border-radius: 999px;
+  background: var(--dshm-accent-soft);
+  color: var(--dshm-accent);
+  font-size: 0.75rem;
+  padding: 2px 8px;
+}
+
+/* 设备列表 */
+
+.dshm-devices {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dshm-devices li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 12px;
+  border: 1px solid var(--dshm-line);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+  color: var(--dshm-sub);
+}
+
+.dshm-devices li strong {
+  color: var(--dshm-text);
+  font-weight: 600;
+}
+
+.dshm-page__foot {
+  margin-top: 22px;
+  border-top: 1px solid var(--dshm-line);
+  padding-top: 14px;
+}
+
+.dshm-page__foot p {
+  margin: 0;
+  color: var(--dshm-sub);
+  font-size: 0.76rem;
+  line-height: 1.7;
+}
+
+.dshm-noscript {
+  color: var(--dshm-danger);
+}
+
+.dshm-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--dshm-code-bg);
+  color: var(--dshm-code-text);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 0.82rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 2147483400;
+}
+
+.dshm-toast.dshm-toast--show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ---------------- 桌面注入浮层（panel.js） ---------------- */
+
+.dshm-fab {
+  --dshm-card: #ffffff;
+  --dshm-text: #17233b;
+  --dshm-line: #e3e9f2;
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2147483000;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--dshm-line);
+  background: var(--dshm-card);
+  box-shadow: 0 6px 18px rgba(11, 18, 32, 0.25);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dshm-fab {
+    --dshm-card: #131c2e;
+    --dshm-text: #e6edf7;
+    --dshm-line: #26334a;
+  }
+}
+
+.dshm-fab:hover {
+  filter: brightness(1.08);
+}
+
+.dshm-overlay {
+  --dshm-card: #ffffff;
+  --dshm-text: #17233b;
+  --dshm-sub: #5b6b85;
+  --dshm-line: #e3e9f2;
+  --dshm-accent: #2f6fed;
+  --dshm-accent-soft: #eaf1ff;
+  --dshm-code-bg: #0b1220;
+  --dshm-code-text: #9fe3b9;
+  position: fixed;
+  right: 18px;
+  bottom: 74px;
+  z-index: 2147483001;
+  width: min(360px, calc(100vw - 36px));
+  max-height: min(600px, calc(100vh - 110px));
+  overflow: auto;
+  background: var(--dshm-card);
+  color: var(--dshm-text);
+  border: 1px solid var(--dshm-line);
+  border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(11, 18, 32, 0.3);
+  padding: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', sans-serif;
+  font-size: 0.84rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dshm-overlay {
+    --dshm-card: #131c2e;
+    --dshm-text: #e6edf7;
+    --dshm-sub: #9fb0c7;
+    --dshm-line: #26334a;
+    --dshm-accent: #5b8cff;
+    --dshm-accent-soft: #1b2a49;
+    --dshm-code-bg: #060a12;
+  }
+}
+
+.dshm-overlay h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dshm-overlay__close {
+  border: none;
+  background: none;
+  color: var(--dshm-sub);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.dshm-overlay__sub {
+  margin: 2px 0 12px;
+  color: var(--dshm-sub);
+  font-size: 0.76rem;
+}
+
+.dshm-overlay__qr {
+  float: right;
+  width: 140px;
+  min-height: 140px;
+  margin: 0 0 10px 12px;
+  background: #ffffff;
+  border: 1px solid var(--dshm-line);
+  border-radius: 10px;
+  padding: 8px;
+}
+
+.dshm-overlay__qr svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.dshm-overlay .dshm-field {
+  margin-bottom: 10px;
+}
+
+.dshm-overlay .dshm-field__label {
+  margin-bottom: 4px;
+}
+
+.dshm-overlay .dshm-field__value {
+  font-size: 0.76rem;
+  padding: 7px 9px;
+}
+
+.dshm-overlay .dshm-code {
+  font-size: 1.1rem;
+  padding: 9px;
+  letter-spacing: 0.35em;
+}
+
+.dshm-overlay .dshm-btn--primary {
+  width: 100%;
+  margin-top: 2px;
+}
+
+.dshm-overlay__devices {
+  clear: both;
+  color: var(--dshm-sub);
+  font-size: 0.76rem;
+  margin: 8px 0 0;
+}
+
+.dshm-overlay::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+@media (max-width: 640px) {
+  .dshm-grid {
+    flex-direction: column;
+  }
+  .dshm-card--qr {
+    flex: none;
+    align-self: center;
+  }
+}

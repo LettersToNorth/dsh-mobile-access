@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="robots" content="noindex, nofollow">
+  <title>手机访问 DeepSeek Harness</title>
+  <link rel="stylesheet" href="/__mobile/assets/style.css">
+</head>
+<body class="dshm-page">
+  <main class="dshm-page__main">
+    <header class="dshm-hero">
+      <span class="dshm-hero__icon" aria-hidden="true">📱</span>
+      <div class="dshm-hero__text">
+        <h1 class="dshm-hero__title">手机访问 DeepSeek Harness</h1>
+        <p class="dshm-hero__sub">手机与本机需在同一 Wi-Fi</p>
+      </div>
+    </header>
+
+    <p id="dshm-loading" class="dshm-notice dshm-notice--info">正在读取配对信息…</p>
+
+    <section id="dshm-error-card" class="dshm-notice dshm-notice--error" hidden>
+      <h2 class="dshm-notice__title">手机访问暂不可用</h2>
+      <p id="dshm-error-text" class="dshm-notice__text"></p>
+      <p class="dshm-hint">修复后点击下方按钮重试；配对信息只会显示在本机。</p>
+      <button id="dshm-retry" class="dshm-btn" type="button">重试</button>
+    </section>
+
+    <p id="dshm-warning" class="dshm-notice dshm-notice--warn" hidden></p>
+
+    <section id="dshm-content" class="dshm-grid" hidden>
+      <div class="dshm-card dshm-card--qr">
+        <h2 class="dshm-card__title">扫码配对</h2>
+        <div id="dshm-qr" class="dshm-qr" aria-label="配对二维码" role="img"></div>
+        <p class="dshm-hint">用手机相机扫描二维码即可自动完成配对，无需输入配对码。</p>
+      </div>
+
+      <div class="dshm-card dshm-card--info">
+        <h2 class="dshm-card__title">手动配对</h2>
+
+        <div class="dshm-field">
+          <span class="dshm-field__label">访问地址</span>
+          <code id="dshm-address" class="dshm-mono dshm-field__value">—</code>
+          <button id="dshm-copy-address" class="dshm-btn dshm-btn--small" type="button" aria-label="复制访问地址">复制</button>
+        </div>
+
+        <div class="dshm-field">
+          <span class="dshm-field__label">配对码</span>
+          <span id="dshm-code" class="dshm-mono dshm-code">------</span>
+          <button id="dshm-copy-code" class="dshm-btn dshm-btn--small" type="button" aria-label="复制配对码">复制</button>
+        </div>
+
+        <div class="dshm-field dshm-field--stacked">
+          <span class="dshm-field__label">完整配对链接</span>
+          <code id="dshm-pairurl" class="dshm-mono dshm-field__value dshm-field__value--small">—</code>
+          <button id="dshm-copy-pairurl" class="dshm-btn dshm-btn--small" type="button" aria-label="复制完整配对链接">复制</button>
+          <p class="dshm-hint">相机无法扫码时，可把此链接发送到手机浏览器打开。</p>
+        </div>
+
+        <div class="dshm-expiry-row">
+          <span class="dshm-field__label">配对码有效期</span>
+          <span id="dshm-expiry" class="dshm-expiry" role="status" aria-live="polite">—</span>
+        </div>
+
+        <button id="dshm-rotate" class="dshm-btn dshm-btn--primary dshm-btn--block" type="button">刷新配对码</button>
+        <p class="dshm-hint">配对码过期后请点击刷新；已经配对成功的手机不受影响。</p>
+      </div>
+    </section>
+
+    <section id="dshm-devices-card" class="dshm-card dshm-card--devices" hidden>
+      <h2 class="dshm-card__title">
+        已配对设备
+        <span id="dshm-device-count" class="dshm-pill">0</span>
+      </h2>
+      <ul id="dshm-device-list" class="dshm-devices"></ul>
+      <p id="dshm-devices-empty" class="dshm-hint" hidden>还没有设备完成配对。</p>
+    </section>
+
+    <footer class="dshm-page__foot">
+      <p>配对信息只在本机显示。二维码与配对链接包含一次性配对码，请勿分享或截图外传。</p>
+    </footer>
+  </main>
+
+  <div id="dshm-toast" class="dshm-toast" role="status" aria-live="polite"></div>
+
+  <noscript>
+    <p class="dshm-noscript">需要启用 JavaScript 才能显示配对二维码与配对码。</p>
+  </noscript>
+
+  <script src="/__mobile/assets/qr.js"></script>
+  <script src="/__mobile/assets/app.js"></script>
+</body>
+</html>

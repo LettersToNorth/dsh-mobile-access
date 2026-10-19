@@ -1,0 +1,12 @@
+# dsh-mobile-access bundle patch: one host row over the Web or Desktop profile.
+# The row name resolves from the profile's own node_modules where the package
+# was installed (dsh plugin / Plugin Hub / plugin_manager install_bundle).
+- insert:
+    - id: mobile-access
+      name: dsh-mobile-access
+      config:
+        # 局域网监听地址：留空自动选择第一个非内部 IPv4；可固定为具体网卡 IP 或 0.0.0.0
+        host: ''
+        # 局域网监听端口；被占用时插件会报错并在面板显示原因
+        port: 58218
+        enabled: true
