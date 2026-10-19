@@ -5,10 +5,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-github/dsh-mobile-access.git"
+    "url": "git+https://github.com/LettersToNorth/dsh-mobile-access.git"
   },
-  "homepage": "https://github.com/your-github/dsh-mobile-access#readme",
-  "bugs": "https://github.com/your-github/dsh-mobile-access/issues",
+  "homepage": "https://github.com/LettersToNorth/dsh-mobile-access#readme",
+  "bugs": "https://github.com/LettersToNorth/dsh-mobile-access/issues",
   "keywords": [
     "deepseek",
     "deepseek-harness",

@@ -12,7 +12,7 @@ English | [README.en.md](README.en.md)
 
 ```sh
 # 从 GitHub 安装（发布后）
-dsh plugin --profile <你的profile> add github:<你的用户名>/dsh-mobile-access
+dsh plugin --profile <你的profile> add github:LettersToNorth/dsh-mobile-access
 # 或本地目录
 dsh plugin --profile <你的profile> add /path/to/dsh-mobile-access
 ```

@@ -32,7 +32,7 @@ Phone ──HTTP/WS──▶ Plugin LAN listener (:58218, one-time pairing code 
 ## Install
 
 ```sh
-dsh plugin --profile <your-profile> add github:<you>/dsh-mobile-access
+dsh plugin --profile <your-profile> add github:LettersToNorth/dsh-mobile-access
 # or, from a local checkout:
 dsh plugin --profile <your-profile> add /path/to/dsh-mobile-access
 ```
