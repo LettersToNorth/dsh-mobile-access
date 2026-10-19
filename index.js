@@ -153,6 +153,8 @@ export function apply(ctx, rawConfig = {}) {
   let destroyed = false
   const liveSockets = new Set()
 
+
+
   // ---------------------------------------------------------------- pairing
 
   function rotatePairCode() {
@@ -582,14 +584,17 @@ export function apply(ctx, rawConfig = {}) {
           headers,
         })
         upstream.on('upgrade', (upRes, upSocket, upHead) => {
+          // RFC 6455：101 响应必须带 Connection: Upgrade 与 Upgrade 头，
+          // 否则严格的浏览器 WS 实现会立刻判失败并重连。
           const lines = [`HTTP/1.1 ${upRes.statusCode} ${upRes.statusMessage ?? 'Switching Protocols'}`]
           for (const [key, value] of Object.entries(upRes.headers)) {
             if (value === undefined) continue
             const lower = key.toLowerCase()
-            if (lower === 'set-cookie' || lower === 'connection' || lower === 'keep-alive') continue
+            if (lower === 'set-cookie' || lower === 'connection' || lower === 'keep-alive' || lower === 'upgrade') continue
             if (Array.isArray(value)) for (const item of value) lines.push(`${key}: ${item}`)
             else lines.push(`${key}: ${value}`)
           }
+          lines.push('Connection: Upgrade', `Upgrade: ${upRes.headers.upgrade ?? 'websocket'}`)
           lines.push('', '')
           socket.write(lines.join('\r\n'))
           if (upHead && upHead.length) socket.write(upHead)
@@ -703,7 +708,11 @@ export function apply(ctx, rawConfig = {}) {
   const tap = ctx.webServer.tapIndex((html) => {
     if (!state.enabled) return html
     if (html.includes('/__mobile/assets/panel.js')) return html
+    // color-scheme + 底色兜底：iOS Safari 整页重绘时若未声明 color-scheme，
+    // 会先用白色合成一帧，造成周期性闪白（GUI 主题跟随系统）。
     const tags =
+      '<meta name="color-scheme" content="light dark" data-dsh-mobile-access="1">\n' +
+      '<style data-dsh-mobile-access="1">html{background-color:var(--dsh-boot-bg,#151517)}</style>\n' +
       '<link rel="stylesheet" href="/__mobile/assets/style.css" data-dsh-mobile-access="1">\n' +
       '<script type="module" src="/__mobile/assets/panel.js" data-dsh-mobile-access="1"></script>\n'
     return html.includes('</body>') ? html.replace('</body>', `${tags}</body>`) : `${html}\n${tags}`
