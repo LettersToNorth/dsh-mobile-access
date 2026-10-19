@@ -1,0 +1,24 @@
+{
+  "name": "DeepSeek Harness",
+  "short_name": "Harness",
+  "description": "手机访问桌面端 DeepSeek Harness",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#151517",
+  "theme_color": "#151517",
+  "icons": [
+    {
+      "src": "/__mobile/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/__mobile/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

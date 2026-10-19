@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.2
+
+- 新增：配对持久化（设备与签名密钥存 `~/.dsh/mobile-access/devices.json`，权限 600），
+  Harness 重启/插件重载后已配对手机免重新扫码
+- 新增：设置页「手机访问」面板与配对页展示外网地址（自动探测 Tailscale 100.64/10 地址）
+- 新增：PWA 支持（manifest + 图标 + standalone 声明），手机「添加到主屏幕」后全屏运行
+- 新增：触屏体验层 `mobile.css`（输入防 iOS 聚焦缩放、触控目标 ≥30px、代码块/表格横向动量滚动、
+  消息正文阅读性、安全区适配），仅 `pointer:coarse` 生效，桌面零影响
+- 变更：默认监听 `0.0.0.0` 以支持 Tailscale 等虚拟网卡；配对码门禁不变
+- 新增（实验）：会话头部工作区速切按钮（调用 GUI 内部 uiWorkspace.openWorkspace，
+  仅触屏渲染；若服务成员不可用则自动隐藏）
+
 ## 0.1.1
 
 - 修复：WebSocket 反向代理转发 101 响应时补写 RFC 6455 要求的 `Connection: Upgrade` 头，

@@ -1,6 +1,6 @@
 {
   "name": "dsh-mobile-access",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "在同一 Wi-Fi 下用手机浏览器安全访问并操作桌面端 DeepSeek Harness 的同一个 Web GUI：会话实时同步，可直接发送指令、回答提问、审批与操作。零外部依赖、离线二维码、一次性配对码。Open the same desktop Web GUI from a phone browser on your local network: sessions stay in sync, send prompts, answer questions, approve and operate directly. Zero runtime dependencies.",
   "license": "MIT",
   "repository": {

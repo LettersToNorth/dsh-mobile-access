@@ -37,6 +37,9 @@ const ASSETS = new Map([
   ['panel.js', 'text/javascript; charset=utf-8'],
   ['qr.js', 'text/javascript; charset=utf-8'],
   ['style.css', 'text/css; charset=utf-8'],
+  ['mobile.css', 'text/css; charset=utf-8'],
+  ['manifest.webmanifest', 'application/manifest+json; charset=utf-8'],
+  ['icon-512.png', 'image/png'],
 ])
 
 const PAIR_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
@@ -72,6 +75,17 @@ function randomCode(length = 6) {
   let out = ''
   for (let i = 0; i < length; i += 1) out += PAIR_ALPHABET[bytes[i] % PAIR_ALPHABET.length]
   return out
+}
+
+function firstTailscaleIPv4() {
+  for (const list of Object.values(os.networkInterfaces())) {
+    for (const info of list ?? []) {
+      if (info.family === 'IPv4' && !info.internal && /^100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./.test(info.address)) {
+        return info.address
+      }
+    }
+  }
+  return null
 }
 
 function firstLanIPv4() {
@@ -139,14 +153,63 @@ export function apply(ctx, rawConfig = {}) {
   }
 
   const bindHost = typeof config.host === 'string' && config.host.trim() ? config.host.trim() : firstLanIPv4()
+  const tailscaleHost = firstTailscaleIPv4()
   const advertisedHost = bindHost === '0.0.0.0' || bindHost === '::' ? firstLanIPv4() : bindHost
   const bindPort = Number(config.port) || 58218
   let boundPort = bindPort
   const lanUrl = () => `http://${advertisedHost}:${boundPort}`
 
   const pairState = { code: null, expiresAt: 0 }
-  const deviceSecret = crypto.randomBytes(32)
+
+  // ---- 配对持久化：密钥与设备清单存 ~/.dsh/mobile-access/devices.json ----
+  const stateDir = path.join(
+    process.env.DSH_HOME || path.join(os.homedir(), '.dsh'),
+    'mobile-access',
+  )
+  const stateFile = path.join(stateDir, 'devices.json')
+  let store = { secret: null, devices: [] }
+  function deviceSecretB64() {
+    return crypto.randomBytes(32).toString('base64')
+  }
+  function loadStore() {
+    try {
+      const raw = JSON.parse(fs.readFileSync(stateFile, 'utf8'))
+      if (typeof raw?.secret === 'string' && Array.isArray(raw.devices)) return raw
+    } catch {
+      /* 首次或损坏时重建 */
+    }
+    return null
+  }
+  function saveStore() {
+    try {
+      fs.mkdirSync(stateDir, { recursive: true })
+      const tmp = `${stateFile}.tmp`
+      fs.writeFileSync(
+        tmp,
+        JSON.stringify({ secret: store.secret, devices: [...devices.values()] }, null, 2),
+        { mode: 0o600 },
+      )
+      fs.renameSync(tmp, stateFile)
+    } catch (error) {
+      log.warn?.(`[${LAN}] 配对数据写入失败：${error?.message ?? error}`)
+    }
+  }
+  const persisted = loadStore()
+  let secretBuf = Buffer.from(persisted?.secret ?? '', 'base64')
+  if (secretBuf.byteLength !== 32) secretBuf = crypto.randomBytes(32)
+  const deviceSecret = secretBuf
+  store.secret = deviceSecret.toString('base64')
   const devices = new Map()
+  for (const device of persisted?.devices ?? []) {
+    if (device && typeof device.id === 'string') {
+      devices.set(device.id, {
+        id: device.id,
+        pairedAt: Number(device.pairedAt) || Date.now(),
+        lastSeenAt: Number(device.lastSeenAt) || 0,
+        userAgent: String(device.userAgent ?? '').slice(0, 160),
+      })
+    }
+  }
   /** The desktop Host's own signed browser cookie; never leaves this process. */
   let hostCookie = null
   let hostCookiePromise = null
@@ -243,6 +306,7 @@ export function apply(ctx, rawConfig = {}) {
       if (!oldest) break
       devices.delete(oldest.id)
     }
+    saveStore()
     rotatePairCode() // one-time code
     log.info?.(`[${LAN}] 新设备已配对 ${id}`)
     return device
@@ -300,6 +364,7 @@ export function apply(ctx, rawConfig = {}) {
         lastSeenAt: device.lastSeenAt,
         userAgent: device.userAgent,
       })),
+      tailscaleUrl: tailscaleHost ? `http://${tailscaleHost}:${boundPort}` : null,
       loopbackOrigin,
       hostCookieReady: Boolean(hostCookie),
     }
@@ -713,7 +778,15 @@ export function apply(ctx, rawConfig = {}) {
     const tags =
       '<meta name="color-scheme" content="light dark" data-dsh-mobile-access="1">\n' +
       '<style data-dsh-mobile-access="1">html{background-color:var(--dsh-boot-bg,#151517)}</style>\n' +
+      '<link rel="manifest" href="/__mobile/assets/manifest.webmanifest" data-dsh-mobile-access="1">\n' +
+      '<meta name="theme-color" content="#151517" data-dsh-mobile-access="1">\n' +
+      '<meta name="mobile-web-app-capable" content="yes" data-dsh-mobile-access="1">\n' +
+      '<meta name="apple-mobile-web-app-capable" content="yes" data-dsh-mobile-access="1">\n' +
+      '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" data-dsh-mobile-access="1">\n' +
+      '<meta name="apple-mobile-web-app-title" content="Harness" data-dsh-mobile-access="1">\n' +
+      '<link rel="apple-touch-icon" href="/__mobile/assets/icon-512.png" data-dsh-mobile-access="1">\n' +
       '<link rel="stylesheet" href="/__mobile/assets/style.css" data-dsh-mobile-access="1">\n' +
+      '<link rel="stylesheet" href="/__mobile/assets/mobile.css" data-dsh-mobile-access="1">\n' +
       '<script type="module" src="/__mobile/assets/panel.js" data-dsh-mobile-access="1"></script>\n'
     return html.includes('</body>') ? html.replace('</body>', `${tags}</body>`) : `${html}\n${tags}`
   })

@@ -83,6 +83,148 @@ window.__ModuleLoader__.load({
       }
     }
 
+
+    // ---------------- 工作区速切（触屏） ----------------
+    // 会话视图的槽位链会传入 selectWorkspace(workspaceId) 与 useWorkspaces。
+    // 渲染一个头部按钮，点开底部弹层列出全部工作区，点一下即切换。
+
+    function isCoarsePointer() {
+      try {
+        return window.matchMedia?.('(pointer: coarse)')?.matches === true
+      } catch {
+        return false
+      }
+    }
+
+    function basename(path) {
+      const parts = String(path || '').split('/')
+      return parts[parts.length - 1] || path
+    }
+
+    function WorkspaceSwitcher(nav) {
+      return function WorkspaceSwitcherButton() {
+        const [open, setOpen] = useState(false)
+        const [, force] = useState(0)
+        if (!nav?.openWorkspace) return null
+        if (!isCoarsePointer()) return null
+
+        const list = nav.workspaces?.list
+        const snap = (() => {
+          try {
+            return list?.getSnapshot?.()
+          } catch {
+            return null
+          }
+        })()
+        const items = Array.isArray(snap?.items) ? snap.items : []
+        if (items.length === 0) return null
+
+        useEffect(() => {
+          if (!list?.subscribe) return
+          const unsubscribe = list.subscribe(() => force((x) => x + 1))
+          return () => {
+            try {
+              unsubscribe?.()
+            } catch {
+              /* ignore */
+            }
+          }
+        }, [list])
+
+        const currentId = (() => {
+          try {
+            if (typeof nav.currentWorkspaceId === 'function') return nav.currentWorkspaceId() ?? null
+          } catch {
+            /* ignore */
+          }
+          return null
+        })()
+
+        const pick = (id) => {
+          setOpen(false)
+          try {
+            Promise.resolve(nav.openWorkspace(id)).catch(() => {})
+          } catch {
+            /* ignore */
+          }
+        }
+
+        const sheet =
+          open === true
+            ? h(
+                'div',
+                {
+                  onClick: () => setOpen(false),
+                  style: {
+                    position: 'fixed', inset: 0, zIndex: 2147482000,
+                    background: 'rgba(0,0,0,0.45)',
+                    display: 'flex', alignItems: 'flex-end',
+                  },
+                },
+                h(
+                  'div',
+                  {
+                    onClick: (e) => e.stopPropagation(),
+                    style: {
+                      width: '100%', maxHeight: '62vh', overflowY: 'auto',
+                      background: 'var(--dsw-alias-bg-layer-2, #171c26)',
+                      color: 'var(--dsw-alias-label-primary, #e8edf5)',
+                      borderTopLeftRadius: 16, borderTopRightRadius: 16,
+                      padding: '14px 12px calc(14px + env(safe-area-inset-bottom, 0px))',
+                      boxShadow: '0 -10px 40px rgba(0,0,0,0.4)',
+                    },
+                  },
+                  h('div', { style: { fontSize: 13, opacity: 0.65, margin: '0 4px 10px' } }, '切换工作区'),
+                  ...items.map((item) => {
+                    const active = item.workspaceId != null && item.workspaceId === currentId
+                    return h(
+                      'button',
+                      {
+                        key: String(item.workspaceId),
+                        onClick: () => pick(item.workspaceId),
+                        style: {
+                          display: 'block', width: '100%', textAlign: 'left',
+                          border: '1px solid rgba(127,127,127,0.25)',
+                          borderRadius: 12, padding: '12px 14px', marginBottom: 8,
+                          background: active ? 'rgba(127,127,127,0.18)' : 'transparent',
+                          color: 'inherit', cursor: 'pointer', minHeight: 48,
+                        },
+                      },
+                      h('div', { style: { fontSize: 15, fontWeight: 600 } },
+                        (item.title || basename(item.path) || '(未命名)') + (active ? '  ✓' : '')),
+                      item.path && item.path !== item.title
+                        ? h('div', { style: { fontSize: 12, opacity: 0.6, marginTop: 2, overflowWrap: 'anywhere' } }, item.path)
+                        : null,
+                    )
+                  }),
+                ),
+              )
+            : null
+
+        return h(
+          React.Fragment,
+          null,
+          h(
+            'button',
+            {
+              onClick: () => setOpen(true),
+              title: '切换工作区',
+              style: {
+                border: '1px solid rgba(127,127,127,0.35)', background: 'transparent',
+                color: 'inherit', borderRadius: 8, padding: '4px 10px',
+                fontSize: 13, cursor: 'pointer', minHeight: 30, maxWidth: 150,
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+              },
+            },
+            '🗂 ',
+            basename(items.find((item) => item.workspaceId != null && item.workspaceId === currentId)?.path) ||
+              items[0] && basename(items[0].path) || '工作区',
+            ' ▾',
+          ),
+          sheet,
+        )
+      }
+    }
     function Section() {
       const { state, error } = useMobileState()
       const [flash, setFlash] = useState('')
@@ -185,6 +327,21 @@ window.__ModuleLoader__.load({
             label,
           }, Section),
         )
+        // 会话头部：工作区速切（仅触屏渲染；未拿到 selectWorkspace 时自动隐藏）
+        try {
+          const nav = ctx.get('uiWorkspace')
+          if (nav?.openWorkspace) {
+            slots.inject('conversation.session.header.actions', () =>
+              slots.register({
+                name: 'conversation.session.header.actions',
+                id: 'mobile-access-workspace-switcher',
+                order: -2,
+              }, WorkspaceSwitcher(nav)),
+            )
+          }
+        } catch {
+          /* 服务不可用时静默跳过 */
+        }
       },
     }
   },

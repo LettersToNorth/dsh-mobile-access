@@ -145,6 +145,26 @@
     el.content.hidden = false
 
     renderQr(state.pairUrl)
+    // 外网（Tailscale）地址：仅当存在且与局域网地址不同时展示
+    var tsField = document.getElementById('dshm-tailscale-field')
+    if (state.tailscaleUrl && state.tailscaleUrl !== state.lanUrl) {
+      if (!tsField) {
+        tsField = document.createElement('div')
+        tsField.id = 'dshm-tailscale-field'
+        tsField.className = 'dshm-field dshm-field--stacked'
+        tsField.innerHTML =
+          '<span class="dshm-field__label">外网地址（Tailscale，手机装 Tailscale 并登录同一账号后可用）</span>' +
+          '<code id="dshm-tailscale" class="dshm-mono dshm-field__value dshm-field__value--small">—</code>' +
+          '<button id="dshm-copy-tailscale" class="dshm-btn dshm-btn--small" type="button">复制</button>'
+        el.pairUrl.parentElement.parentElement.appendChild(tsField)
+        document.getElementById('dshm-copy-tailscale').addEventListener('click', function () {
+          copyText(document.getElementById('dshm-tailscale').textContent, '外网地址')
+        })
+      }
+      document.getElementById('dshm-tailscale').textContent = state.tailscaleUrl
+    } else if (tsField) {
+      tsField.remove()
+    }
     el.address.textContent = state.lanUrl
     el.code.textContent = state.pairCode
     el.pairUrl.textContent = state.pairUrl

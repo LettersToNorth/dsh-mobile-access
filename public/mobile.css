@@ -1,0 +1,99 @@
+/* dsh-mobile-access — 移动端（触屏）体验优化。
+ * 全部规则限定在 pointer:coarse 下，桌面鼠标环境不受影响。
+ * 不触碰 GUI 的 dockkit 布局几何（宽度由拖拽状态内联管理），
+ * 只做阅读性、触控目标、输入与滚动的体验修复。 */
+
+@media (pointer: coarse) {
+  html {
+    /* 防止 Safari 在聚焦输入框时自动放大页面 */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    /* 防止下拉/回弹把页面拖出边界 */
+    overscroll-behavior-y: contain;
+  }
+
+  * {
+    /* 去掉移动端点击高亮块 */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ---- 触控目标：按钮/标签页/开关至少 30px 高 ---- */
+  button,
+  [role='button'],
+  [role='tab'],
+  [role='menuitem'],
+  [aria-haspopup] {
+    min-height: 30px;
+  }
+
+  input[type='checkbox'],
+  input[type='radio'] {
+    min-width: 20px;
+    min-height: 20px;
+  }
+
+  /* ---- 输入聚焦不触发 iOS 自动放大：字号不低于 16px ---- */
+  textarea,
+  input:not([type='checkbox']):not([type='radio']),
+  [contenteditable]:not([class*='_markdown_']) {
+    font-size: max(14px, 16px);
+  }
+
+  /* ---- 消息正文阅读性 ---- */
+  [class*='_markdown_'] {
+    font-size: 15px;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+  }
+
+  /* 代码块与表格横向滚动，不撑破布局 */
+  [class*='_markdown_'] pre,
+  [class*='_code-block_'],
+  [class*='_md-code-block_'] {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  [class*='_markdown_'] table,
+  [class*='_tableScroll_'] {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+
+  /* ---- 滚动容器全部使用动量滚动 ---- */
+  [class*='_tableScroll_'],
+  [class*='_compactList_'] {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ---- 悬浮配对按钮：触屏上稍大、避免误触 ---- */
+  .dshm-fab {
+    width: 50px;
+    height: 50px;
+    right: 14px;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .dshm-overlay {
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* 窄屏（虚拟视口下也可能触发）额外收紧 */
+@media (pointer: coarse) and (max-width: 500px) {
+  [class*='_markdown_'] {
+    font-size: 15px;
+  }
+}
