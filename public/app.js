@@ -144,6 +144,27 @@
     el.loading.hidden = true
     el.content.hidden = false
 
+    // 外网（Tailscale）二维码：与局域网二维码并存，手机开 Tailscale 时扫它
+    var tsQrWrap = document.getElementById('dshm-tsqrcode')
+    if (state.tailscalePairUrl && state.tailscalePairUrl !== state.pairUrl) {
+      if (!tsQrWrap) {
+        tsQrWrap = document.createElement('div')
+        tsQrWrap.id = 'dshm-tsqrcode'
+        tsQrWrap.innerHTML =
+          '<h2 class="dshm-card__title">外网扫码（需手机开 Tailscale）</h2>' +
+          '<div id="dshm-qr-ts" class="dshm-qr" aria-label="外网配对二维码" role="img"></div>' +
+          '<p class="dshm-hint">手机已连接 Tailscale 时扫这个；在家用上面的局域网二维码即可。</p>'
+        var qrCard = document.getElementById('dshm-qr').closest('.dshm-card')
+        qrCard.appendChild(tsQrWrap)
+      }
+      tsQrWrap.hidden = false
+      var tsQrEl = document.getElementById('dshm-qr-ts')
+      if (window.dshmQR) {
+        try { window.dshmQR.render(tsQrEl, state.tailscalePairUrl, { size: 220 }) } catch (e) {}
+      }
+    } else if (tsQrWrap) {
+      tsQrWrap.hidden = true
+    }
     renderQr(state.pairUrl)
     // 外网（Tailscale）地址：仅当存在且与局域网地址不同时展示
     var tsField = document.getElementById('dshm-tailscale-field')

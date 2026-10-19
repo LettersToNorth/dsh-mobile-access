@@ -365,6 +365,10 @@ export function apply(ctx, rawConfig = {}) {
         userAgent: device.userAgent,
       })),
       tailscaleUrl: tailscaleHost ? `http://${tailscaleHost}:${boundPort}` : null,
+      tailscalePairUrl:
+        tailscaleHost && state.enabled
+          ? `http://${tailscaleHost}:${boundPort}/?pair=${currentPairCode()}`
+          : null,
       loopbackOrigin,
       hostCookieReady: Boolean(hostCookie),
     }
@@ -690,7 +694,7 @@ export function apply(ctx, rawConfig = {}) {
   // ------------------------------------------------------------ LAN server
 
   function unauthorized(res, message) {
-    const body = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>需要配对</title><body style="font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0b1220;color:#e6edf7"><div style="max-width:22rem;padding:2rem;text-align:center"><div style="font-size:2.5rem">🔒</div><h1 style="font-size:1.05rem;font-weight:600;margin:.8rem 0">需要配对</h1><p style="font-size:.85rem;line-height:1.6;color:#9fb0c7">${message}</p></div></body>`
+    const body = `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>需要配对</title><body style="font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0b1220;color:#e6edf7"><div style="max-width:22rem;padding:2rem;text-align:center"><div style="font-size:2.5rem">🔒</div><h1 style="font-size:1.05rem;font-weight:600;margin:.8rem 0">需要配对</h1><p style="font-size:.85rem;line-height:1.6;color:#9fb0c7">${message}</p><form method="get" action="/" style="margin-top:1.2rem;display:flex;gap:8px"><input name="pair" inputmode="text" autocapitalize="characters" autocomplete="off" placeholder="输入 6 位配对码" required style="flex:1;min-width:0;background:#111a2c;border:1px solid #2a3b55;border-radius:8px;padding:10px 12px;color:#e6edf7;font-size:16px;letter-spacing:.2em;text-transform:uppercase;text-align:center"><button type="submit" style="background:#2f6fed;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer">配对</button></form><p style="font-size:.75rem;color:#5f718c;margin-top:1rem;line-height:1.6">配对码在电脑端「手机访问」面板显示，约 30 分钟刷新一次</p></div></body>`
     res.writeHead(401, {
       'content-type': 'text/html; charset=utf-8',
       'cache-control': 'no-store',
